@@ -1,0 +1,78 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Today's Dental - Insurance Network Search"
+$form.Size = New-Object System.Drawing.Size(500,250)
+$form.StartPosition = "CenterScreen"
+
+$label = New-Object System.Windows.Forms.Label
+$label.Text = "Type Insurance Company Name:"
+$label.Location = '20,20'
+$label.Size = '300,20'
+$form.Controls.Add($label)
+
+$txtSearch = New-Object System.Windows.Forms.TextBox
+$txtSearch.Location = '20,50'
+$txtSearch.Size = '440,30'
+$form.Controls.Add($txtSearch)
+
+$btnCheck = New-Object System.Windows.Forms.Button
+$btnCheck.Text = "Check Network"
+$btnCheck.Location = '20,90'
+$btnCheck.Size = '150,35'
+$form.Controls.Add($btnCheck)
+
+$result = New-Object System.Windows.Forms.Label
+$result.Location = '200,95'
+$result.Size = '260,50'
+$result.Font = New-Object System.Drawing.Font("Segoe UI",16,[System.Drawing.FontStyle]::Bold)
+$form.Controls.Add($result)
+
+# --- OUT OF NETWORK KEYWORDS ---
+$OutOfNetwork = @(
+"DMO","DHMO","HMO","MEDICAID","WELLCARE","TOTAL CARE","MOLINA",
+"AMBERTTER","AETNA DMO","AETNA FEDERAL","AETNA DISCOUNT","CIGNA ACCESS",
+"DELTA HMO","DELTA PPO","DENTAMAX","DHA","LIBERTY","MEDICA","UNITED NATIONAL LIFE",
+"TRUASSURE PPO","UHC HERITAGE","CARE PPO","CAREINGTON 500"
+)
+
+# --- IN NETWORK KEYWORDS ---
+$InNetwork = @(
+"AETNA POS","AMERITAS","ASSURANT","CAREINGTON","CIGNA DPPO","DELTA PREMIER",
+"DELTA PPO+PREMIER","FEP BLUE","GEHA","GUARDIAN","HUMANA","METLIFE",
+"UNITED HEALTHCARE","UNITED CONCORDIA","PRINCIPAL","RENAISSANCE","STANDARD"
+)
+
+$btnCheck.Add_Click({
+
+    $text = $txtSearch.Text.ToUpper()
+
+    if ($text.Length -lt 3) {
+        $result.Text = "ENTER MORE INFO"
+        $result.ForeColor = "Black"
+        return
+    }
+
+    foreach ($word in $OutOfNetwork) {
+        if ($text -like "*$word*") {
+            $result.Text = "OUT OF NETWORK"
+            $result.ForeColor = "Red"
+            return
+        }
+    }
+
+    foreach ($word in $InNetwork) {
+        if ($text -like "*$word*") {
+            $result.Text = "IN NETWORK"
+            $result.ForeColor = "Green"
+            return
+        }
+    }
+
+    $result.Text = "OUT OF NETWORK"
+    $result.ForeColor = "Red"
+})
+
+$form.ShowDialog()
+
